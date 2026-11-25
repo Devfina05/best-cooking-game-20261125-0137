@@ -1,0 +1,197 @@
+/* Simmer & Serve — a tiny kitchen rush game. Warm diner palette, plain CSS,
+   no images and no network: every visual is a coloured shape or text. */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: "Trebuchet MS", Verdana, sans-serif;
+  background: #f3e5c8;
+  color: #3a2a1a;
+}
+#kitchen {
+  max-width: 1100px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 12px 18px 20px;
+  background: #fdf6e3;
+  border-left: 6px solid #b4552d;
+  border-right: 6px solid #b4552d;
+}
+#topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 3px solid #b4552d;
+  padding-bottom: 8px;
+}
+#topbar h1 { margin: 0; font-size: 30px; color: #b4552d; letter-spacing: 1px; }
+#stats { display: flex; gap: 16px; font-weight: bold; font-size: 17px; }
+#stats span { background: #fff3d6; border: 2px solid #d9a441; border-radius: 8px; padding: 4px 10px; }
+
+/* Order board: the ticket on the left, the next order on the right. */
+#board { display: flex; gap: 14px; margin-top: 14px; }
+#ticket {
+  flex: 1;
+  background: #fffdf6;
+  border: 2px dashed #b4552d;
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-height: 118px;
+}
+#ticket-dish { font-size: 24px; font-weight: bold; }
+#ticket-needs { margin: 6px 0 8px; padding-left: 2px; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+#ticket-needs li {
+  background: #f3e5c8;
+  border: 2px solid #d9a441;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 15px;
+}
+#ticket-needs li.done { background: #cfe8b7; border-color: #5d8a3c; text-decoration: line-through; }
+#ticket-timer { height: 12px; background: #e8d9b8; border-radius: 6px; overflow: hidden; }
+#ticket-timer-fill { height: 100%; width: 100%; background: #5d8a3c; }
+#ticket-timer-fill.low { background: #c0392b; }
+#ticket-time { font-size: 14px; margin-top: 4px; font-weight: bold; }
+#next-up {
+  width: 190px;
+  background: #f3e5c8;
+  border: 2px solid #d9a441;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.next-label { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #7a5a34; }
+#next-dish { font-size: 19px; font-weight: bold; margin-top: 4px; }
+
+/* Counter: the plate in the middle, serve/clear on the side. */
+#counter { display: flex; gap: 14px; align-items: stretch; margin-top: 14px; }
+#plate-wrap {
+  flex: 1;
+  background: #e9c893;
+  border: 3px solid #8a5a2b;
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-height: 190px;
+}
+#plate-label { font-weight: bold; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; }
+#plate {
+  min-height: 110px;
+  margin-top: 8px;
+  background: #fffdf6;
+  border: 4px solid #d9d2c0;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  gap: 3px;
+}
+#plate.empty::after { content: "An empty plate is waiting…"; color: #9a8a70; font-style: italic; }
+.plate-item {
+  width: 78%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 15px;
+  color: #fff;
+  border-radius: 12px;
+  padding: 4px 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+#plate-hint { margin-top: 8px; font-size: 13px; color: #6b4e2e; }
+#actions { display: flex; flex-direction: column; gap: 10px; width: 170px; }
+#actions button {
+  flex: 1;
+  font-family: inherit;
+  font-size: 19px;
+  font-weight: bold;
+  border-radius: 10px;
+  border: 3px solid #8a5a2b;
+  cursor: pointer;
+  background: #f2c230;
+  color: #3a2a1a;
+}
+#actions button:disabled { opacity: 0.45; cursor: default; }
+#clear-btn { background: #e8d9b8 !important; }
+#serve-btn.ready { background: #5d8a3c; color: #fff; animation: pulse 0.9s infinite alternate; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.04); } }
+
+/* Ingredients: one button per ingredient on the counter. */
+#ingredients {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+.ingredient {
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 17px;
+  font-weight: bold;
+  text-align: left;
+  background: #fffdf6;
+  border: 2px solid #d9a441;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.ingredient:hover { background: #fff3d6; }
+.ingredient .swatch {
+  width: 30px; height: 30px; flex: none;
+  border-radius: 8px;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+}
+.ingredient .key {
+  margin-left: auto;
+  background: #3a2a1a;
+  color: #fdf6e3;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 14px;
+}
+.ingredient.wrong { animation: shake 0.3s; border-color: #c0392b; }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+#message {
+  margin-top: 14px;
+  font-size: 18px;
+  font-weight: bold;
+  min-height: 26px;
+  text-align: center;
+}
+
+/* Narrow screens: two ingredient columns instead of four. */
+@media (max-width: 720px) {
+  #ingredients { grid-template-columns: repeat(2, 1fr); }
+  #counter { flex-direction: column; }
+  #actions { flex-direction: row; width: auto; }
+  #actions button { padding: 12px 0; }
+}
+
+/* Title / pause / game-over overlay. */
+#overlay {
+  position: fixed; inset: 0;
+  background: rgba(58, 42, 26, 0.72);
+  display: flex; align-items: center; justify-content: center;
+}
+#overlay[hidden] { display: none; }
+#overlay-card {
+  background: #fdf6e3;
+  border: 4px solid #b4552d;
+  border-radius: 14px;
+  padding: 26px 34px;
+  text-align: center;
+  max-width: 560px;
+}
+#overlay-card h2 { margin: 0 0 8px; font-size: 34px; color: #b4552d; }
+#overlay-card p { font-size: 18px; margin: 8px 0; }
+#overlay-btn {
+  font-family: inherit;
+  font-size: 21px; font-weight: bold;
+  background: #5d8a3c; color: #fff;
+  border: 3px solid #3c5a26; border-radius: 10px;
+  padding: 10px 26px; cursor: pointer; margin-top: 10px;
+}
+#overlay-help { font-size: 14px !important; color: #7a5a34; }
+#status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
